@@ -22,7 +22,7 @@ namespace Assets.Scripts
             _gestureDetector.TrackingId = id;
             // if the current body is tracked, unpause its detector to get VisualGestureBuilderFrameArrived events
             _gestureDetector.IsPaused = false;
-            _gestureDetector.OnGestureDetected += GestureDetectorOnGestureDetected;
+           
 
 
         }
@@ -34,15 +34,12 @@ namespace Assets.Scripts
                 return;
             }
             var isDetected = e.IsBodyTrackingIdValid && e.IsGestureDetected;
-          
             if (Status != null)
             {
                 StringBuilder text = new StringBuilder(string.Format("Gesture:{0} Detected: {1}\n", e.GestureName, isDetected));
                 text.Append(string.Format("Confidence: {0}\n", e.DetectionConfidence));
                 Status.text = text.ToString();
             }
-        
-
             //move the shape 
             var group = FindObjectOfType<Group>();
 
@@ -50,7 +47,6 @@ namespace Assets.Scripts
             {
                 return;
             }
-
             switch (e.GestureName)
             {
                 case "Lean_Left":
@@ -100,6 +96,7 @@ namespace Assets.Scripts
                 }
                 var shapesdbPath = Application.dataPath + "/database/Controls.gbd";
                 _gestureDetector = new GestureDetector(_sensor, shapesdbPath);
+                _gestureDetector.OnGestureDetected += GestureDetectorOnGestureDetected;
             }
             if (Status != null)
             {

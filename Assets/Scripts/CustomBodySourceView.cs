@@ -111,11 +111,7 @@ namespace Assets.Scripts
 
         private GameObject CreateBodyObject(ulong id)
         {
-
-
-
-
-            GameObject body = new GameObject(id.ToString());
+            var body = new GameObject(id.ToString());
 
             for (Kinect.JointType jt = Kinect.JointType.SpineBase; jt <= Kinect.JointType.ThumbRight; jt++)
             {
@@ -124,7 +120,6 @@ namespace Assets.Scripts
                 LineRenderer lr = jointObj.AddComponent<LineRenderer>();
                 lr.SetVertexCount(2);
                 lr.material = BoneMaterial;
-                //lr.SetWidth(0.05f, 0.05f);
                 lr.startWidth = 0.05f;
                 lr.endWidth = 0.05f;
                 jointObj.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
@@ -147,20 +142,15 @@ namespace Assets.Scripts
                     targetJoint = body.Joints[_boneMap[jt]];
                 }
 
-                Transform jointObj = bodyObject.transform.FindChild(jt.ToString());
+                var jointObj = bodyObject.transform.FindChild(jt.ToString());
                 jointObj.localPosition = GetVector3FromJoint(sourceJoint);
 
-                LineRenderer lr = jointObj.GetComponent<LineRenderer>();
+                var lr = jointObj.GetComponent<LineRenderer>();
                 if (targetJoint.HasValue)
                 {
                     lr.SetPosition(0, jointObj.localPosition);
                     lr.SetPosition(1, GetVector3FromJoint(targetJoint.Value));
 
-                    //todo Adam - Az set different colors for each player 
-                    //we have tarking id of shape and motion player 
-                    //we only need to change Kinect.TrackingState.Tracked to different color 
-                    //_KinectPlayersManager.GetShapesPlayerTrackingId();
-                    //_KinectPlayersManager.GetMotionPlayerTrackingId();
                     if (bodyObject.gameObject.name == _kinectPlayersManager.GetShapesPlayerTrackingId().ToString())
                     {
                         lr.startColor = Color.green;

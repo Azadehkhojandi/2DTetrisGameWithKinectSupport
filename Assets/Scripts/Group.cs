@@ -3,13 +3,13 @@ using UnityEngine;
 
 public class Group : MonoBehaviour
 {
-    
+
     private bool _isPreview;
     private float _lastFall = 0; // Time since last gravity tick
     private float _lastRotate = 0;// Time since last rotate
     private float _lastMoveRight = 0;// Time since last move right
     private float _lastMoveLeft = 0;// Time since last move left
-    private float _lastRotateDelay=0.3f;
+    private float _lastRotateDelay = 0.3f;
     private float _lastMoveDelay = 0.3f;
 
 
@@ -30,15 +30,11 @@ public class Group : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameOver.IsGameover)
+        if (GameOver.IsGameover || _isPreview)
         {
             return;
         }
-        if (_isPreview)
-        {
-            return;
-        }
-        
+
         // Move Left
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
@@ -176,7 +172,7 @@ public class Group : MonoBehaviour
     bool IsValidGridPos()
     {
         //check to make sure it's not preview
-        if (transform.position.x == 15 && transform.position.y == 10)
+        if (transform.position.x == 15f && transform.position.y == 10f)
         {
             _isPreview = true;
             return true;
@@ -200,11 +196,19 @@ public class Group : MonoBehaviour
     void UpdateGrid()
     {
         // Remove old children from BlocksGrid
-        for (int y = 0; y < Grid.Height; ++y)
-            for (int x = 0; x < Grid.Width; ++x)
+        for (var y = 0; y < Grid.Height; ++y)
+        {
+            for (var x = 0; x < Grid.Width; ++x)
+            {
                 if (Grid.BlocksGrid[x, y] != null)
+                {
                     if (Grid.BlocksGrid[x, y].parent == transform)
+                    {
                         Grid.BlocksGrid[x, y] = null;
+                    }
+                }
+            }
+        }
 
         // Add new children to BlocksGrid
         foreach (Transform child in transform)

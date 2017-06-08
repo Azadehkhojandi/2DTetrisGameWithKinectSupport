@@ -39,29 +39,25 @@ namespace Assets.Scripts
             }
 
             // create the vgb source. The associated body tracking ID will be set when a valid body frame arrives from the sensor.
-            this._vgbFrameSource = VisualGestureBuilderFrameSource.Create(kinectSensor, 0);
-            this._vgbFrameSource.TrackingIdLost += this.Source_TrackingIdLost;
+            _vgbFrameSource = VisualGestureBuilderFrameSource.Create(kinectSensor, 0);
+            _vgbFrameSource.TrackingIdLost += Source_TrackingIdLost;
 
             // open the reader for the vgb frames
-            this._vgbFrameReader = this._vgbFrameSource.OpenReader();
-            if (this._vgbFrameReader != null)
+            _vgbFrameReader = _vgbFrameSource.OpenReader();
+            if (_vgbFrameReader != null)
             {
-                this._vgbFrameReader.IsPaused = true;
-                this._vgbFrameReader.FrameArrived += this.Reader_GestureFrameArrived;
+                _vgbFrameReader.IsPaused = true;
+                _vgbFrameReader.FrameArrived += Reader_GestureFrameArrived;
             }
-
-
-            // load the 'Seated' gesture from the gesture database
-            //var databasePath = Application.dataPath + this._gestureDatabase;
+            
             using (VisualGestureBuilderDatabase database = VisualGestureBuilderDatabase.Create(gestureDatabasePath))
             {
-                // we could load all available gestures in the database with a call to vgbFrameSource.AddGestures(database.AvailableGestures), 
-                // but for this program, we only want to track one discrete gesture from the database, so we'll load it by name
+ 
                 foreach (Gesture gesture in database.AvailableGestures)
                 {
                     if (gesture!=null && !string.IsNullOrEmpty(gesture.Name))
                     {
-                        this._vgbFrameSource.AddGesture(gesture);
+                       _vgbFrameSource.AddGesture(gesture);
                     }
                 }
             }
@@ -77,14 +73,14 @@ namespace Assets.Scripts
         {
             get
             {
-                return this._vgbFrameSource.TrackingId;
+                return _vgbFrameSource.TrackingId;
             }
 
             set
             {
-                if (this._vgbFrameSource.TrackingId != value)
+                if (_vgbFrameSource.TrackingId != value)
                 {
-                    this._vgbFrameSource.TrackingId = value;
+                    _vgbFrameSource.TrackingId = value;
                 }
             }
         }
@@ -97,14 +93,14 @@ namespace Assets.Scripts
         {
             get
             {
-                return this._vgbFrameReader.IsPaused;
+                return _vgbFrameReader.IsPaused;
             }
 
             set
             {
-                if (this._vgbFrameReader.IsPaused != value)
+                if (_vgbFrameReader.IsPaused != value)
                 {
-                    this._vgbFrameReader.IsPaused = value;
+                   _vgbFrameReader.IsPaused = value;
                 }
             }
         }
@@ -114,7 +110,7 @@ namespace Assets.Scripts
         /// </summary>
         public void Dispose()
         {
-            this.Dispose(true);
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
 
@@ -126,18 +122,18 @@ namespace Assets.Scripts
         {
             if (disposing)
             {
-                if (this._vgbFrameReader != null)
+                if (_vgbFrameReader != null)
                 {
-                    this._vgbFrameReader.FrameArrived -= this.Reader_GestureFrameArrived;
-                    this._vgbFrameReader.Dispose();
-                    this._vgbFrameReader = null;
-                }
+                    _vgbFrameReader.FrameArrived -= Reader_GestureFrameArrived;
+                    _vgbFrameReader.Dispose();
+                    _vgbFrameReader = null;
+                }        
 
-                if (this._vgbFrameSource != null)
+                if (_vgbFrameSource != null)
                 {
-                    this._vgbFrameSource.TrackingIdLost -= this.Source_TrackingIdLost;
-                    this._vgbFrameSource.Dispose();
-                    this._vgbFrameSource = null;
+                    _vgbFrameSource.TrackingIdLost -= Source_TrackingIdLost;
+                    _vgbFrameSource.Dispose();
+                    _vgbFrameSource = null;
                 }
             }
         }
@@ -149,8 +145,8 @@ namespace Assets.Scripts
         /// <param name="e">event arguments</param>
         private void Reader_GestureFrameArrived(object sender, VisualGestureBuilderFrameArrivedEventArgs e)
         {
-            VisualGestureBuilderFrameReference frameReference = e.FrameReference;
-            using (VisualGestureBuilderFrame frame = frameReference.AcquireFrame())
+            var frameReference = e.FrameReference;
+            using (var frame = frameReference.AcquireFrame())
             {
                 if (frame != null)
                 {
@@ -161,12 +157,10 @@ namespace Assets.Scripts
                     {
 
                         var discreteGestureResults = new Dictionary<string, DiscreteGestureResult> ();
-                        foreach (Gesture gesture in this._vgbFrameSource.Gestures)
+                        foreach (Gesture gesture in _vgbFrameSource.Gestures)
                         {
                         
-                            //if (gesture.Name.Equals(this.seatedGestureName) && gesture.GestureType == GestureType.Discrete)
-                            //{
-                            DiscreteGestureResult result = null;
+                            DiscreteGestureResult result;
                             discreteResults.TryGetValue(gesture, out result);
 
                             if (result != null)
@@ -174,15 +168,15 @@ namespace Assets.Scripts
                                 discreteGestureResults.Add(gesture.Name,result);
                                
                             }
-                            //}
+                            
                         }
 
-                        if (this.OnGestureDetected != null && discreteGestureResults.Any())
+                        if (OnGestureDetected != null && discreteGestureResults.Any())
                         {
                             var bestPossibleresult = discreteGestureResults.Where(x=>x.Value.Detected).OrderByDescending(x=>x.Value.Confidence).FirstOrDefault();
                             if (bestPossibleresult.Value != null)
                             {
-                                this.OnGestureDetected(this, new GestureEventArgs(bestPossibleresult.Key,TrackingId,true, bestPossibleresult.Value.Detected, bestPossibleresult.Value.Confidence));
+                               OnGestureDetected(this, new GestureEventArgs(bestPossibleresult.Key,TrackingId,true, bestPossibleresult.Value.Detected, bestPossibleresult.Value.Confidence));
                             }
                         }
                     }

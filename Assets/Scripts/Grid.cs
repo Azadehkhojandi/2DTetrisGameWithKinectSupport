@@ -9,16 +9,7 @@ namespace Assets.Scripts
         public static int Height = 20;
         public static Transform[,] BlocksGrid = new Transform[Width, Height];
 
-        // Use this for initialization
-        void Start () {
-		
-        }
-	
-        // Update is called once per frame
-        void Update () {
-		
-        }
-
+       
         public static Vector2 RoundVec2(Vector2 v)
         {
             return new Vector2(Mathf.Round(v.x),
@@ -33,7 +24,7 @@ namespace Assets.Scripts
 
         public static void DeleteRow(int y)
         {
-            for (int x = 0; x < Width; ++x)
+            for (var x = 0; x < Width; ++x)
             {
                 Destroy(BlocksGrid[x, y].gameObject);
                 BlocksGrid[x, y] = null;
@@ -42,7 +33,7 @@ namespace Assets.Scripts
 
         public static void DecreaseRow(int y)
         {
-            for (int x = 0; x < Width; ++x)
+            for (var x = 0; x < Width; ++x)
             {
                 if (BlocksGrid[x, y] != null)
                 {
@@ -58,12 +49,15 @@ namespace Assets.Scripts
 
         public static void DecreaseRowsAbove(int y)
         {
-            for (int i = y; i < Height; ++i)
+            for (var i = y; i < Height; ++i)
+            {
                 DecreaseRow(i);
+            }
+              
         }
         public static bool IsRowFull(int y)
         {
-            for (int x = 0; x < Width; ++x)
+            for (var x = 0; x < Width; ++x)
             {
                 if (BlocksGrid[x, y] == null)
                 {
@@ -75,7 +69,7 @@ namespace Assets.Scripts
         }
         public static void DeleteFullRows()
         {
-            for (int y = 0; y < Height; ++y)
+            for (var y = 0; y < Height; ++y)
             {
                 if (IsRowFull(y))
                 {

@@ -14,7 +14,7 @@ namespace Assets.Scripts
        
         private KinectPlayersManager _kinectPlayersManager;
         private KinectSensor _sensor;
-        private string _shapesdbPath;
+        private string _playersdbPath;
         private Dictionary<ulong, GestureDetector> _bodies = new Dictionary<ulong, GestureDetector>();
 
         public GameObject KinectPlayersManager;
@@ -30,7 +30,7 @@ namespace Assets.Scripts
 
             if (Status != null)
             {
-                StringBuilder text = new StringBuilder(string.Format("Gesture:{0} Detected: {1}\n", e.GestureName, isDetected));
+                var text = new StringBuilder(string.Format("Gesture:{0} Detected: {1}\n", e.GestureName, isDetected));
                 text.Append(string.Format("Confidence: {0}\n", e.DetectionConfidence));
                 Status.text = text.ToString();
             }
@@ -75,7 +75,7 @@ namespace Assets.Scripts
     {
         _kinectPlayersManager = KinectPlayersManager.GetComponent<KinectPlayersManager>();
         _sensor = KinectSensor.GetDefault();
-        _shapesdbPath = Application.dataPath + "/database/Players.gbd";
+        _playersdbPath = Application.dataPath + "/database/Players.gbd";
         if (_sensor != null)
         {
 
@@ -83,8 +83,6 @@ namespace Assets.Scripts
             {
                 _sensor.Open();
             }
-
-
         }
         if (Status != null)
         {
@@ -138,7 +136,7 @@ namespace Assets.Scripts
 
     public GestureDetector AddGestureDetector(ulong trackingId)
     {
-        var gestureDetector = new GestureDetector(_sensor, _shapesdbPath)
+        var gestureDetector = new GestureDetector(_sensor, _playersdbPath)
         {
             TrackingId = trackingId,
             // if the current body is tracked, unpause its detector to get VisualGestureBuilderFrameArrived events

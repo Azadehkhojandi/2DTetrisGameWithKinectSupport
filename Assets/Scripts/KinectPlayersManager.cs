@@ -24,7 +24,7 @@ namespace Assets.Scripts
             _controlsPlayerTrackingId = controlsPlayerTrackingId;
         }
 
-        //retun all detected bodies
+        //return all detected bodies
         public Kinect.Body[] GetData()
         {
             if (_bodyManager == null)
@@ -143,43 +143,8 @@ namespace Assets.Scripts
             {
                 _controlsPlayerTrackingId = 0;
             }
-
-
-            //if (trackedIds.Count >= 2)
-            //{
-            //    if (_shapesPlayerTrackingId == 0)
-            //    {
-            //        _shapesPlayerTrackingId = trackedIds[0];
-
-            //    }
-
-            //    if (_controlsPlayerTrackingId == 0)
-            //    {
-            //        _controlsPlayerTrackingId = trackedIds[1];
-            //    }
-            //} 
-            //else if (trackedIds.Count == 1)
-            //{
-                
-            //        //picks the first player to play shapes
-            //        if (_shapesPlayerTrackingId == 0)
-            //        {
-            //            _shapesPlayerTrackingId = trackedIds[0];
-            //        }
-            //        _controlsPlayerTrackingId = 0;
-                
-               
-            //}
+            
            
         }
-    }
-
-    public class KinectPlayersEventArgs : EventArgs
-    {
-        public KinectPlayersEventArgs(ulong trackingId)
-        {
-            TrackingId = trackingId;
-        }
-        public ulong TrackingId { get; set; }
     }
 }
